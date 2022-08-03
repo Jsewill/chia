@@ -1,4 +1,6 @@
-/* Package metadata implements types for working with the Chia NFT Metadata Specification (CHIP-0007: https://github.com/Chia-Network/chips/blob/metadata-schema/CHIPs/chip-will-riches-metadata.md) in Go (https://golang.org).
+/* Package metadata implements types for working with the Chia NFT Metadata Specification
+(CHIP-0007: https://github.com/Chia-Network/chips/blob/metadata-schema/CHIPs/chip-will-riches-metadata.md),
+in Go (https://golang.org).
 
 This package is part of the broader set of packages at https://github.com/Jsewill/chia/
 */

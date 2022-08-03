@@ -5,6 +5,14 @@ import (
 	"fmt"
 )
 
+// Procedure represents procedure, and its value is its name.
+type Procedure string
+
+// String implements the fmt.Stringer interface.
+func (p Procedure) String() string {
+	return string(p)
+}
+
 // Caller is implemented by any type that calls a Chia RPC endpoint.
 type Caller interface {
 	Call(Procedure, []byte) ([]byte, error)
@@ -19,6 +27,7 @@ type Sender interface {
 // Generic response type for use in conjunction with UntypedRequest.
 type UntypedResponse map[string]interface{}
 
+// Convenience function. May be deprecated.
 func NewUntypedResponse() UntypedResponse {
 	return make(UntypedResponse)
 }
@@ -29,14 +38,17 @@ type UntypedRequest struct {
 	Data map[string]interface{}
 }
 
+// NewUntypedRequest takes a Procedure and returns an UntypedRequest.
 func NewUntypedRequest(p Procedure) *UntypedRequest {
 	return &UntypedRequest{Proc: p, Data: make(map[string]interface{})}
 }
 
+// Procedure returns the procedure currently assigned to this generic request.
 func (u *UntypedRequest) Procedure() Procedure {
 	return u.Proc
 }
 
+// Send sends the request via an Endpoint, and returns the result as an UntypedResponse, or nil, and an error. If successful, error returns nil.
 func (u *UntypedRequest) Send(e *Endpoint) (UntypedResponse, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(u.Data)
@@ -57,6 +69,7 @@ func (u *UntypedRequest) Send(e *Endpoint) (UntypedResponse, error) {
 	return UntypedResponse(ur), nil
 }
 
+// String implements the fmt.Stringer interface.
 func (u *UntypedRequest) String() string {
 	j, err := json.Marshal(u.Data)
 	if err != nil {

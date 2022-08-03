@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 )
@@ -32,8 +31,9 @@ func init() {
 }
 
 // Call is a general endpoint call function for convenience.
+// It takes a Caller, procedure name string, and an any data type to marshal into JSON.
 // @TODO: Expand definition for use with interfaces. May require some renaming of Endpoint and Procedure functions as well as package interfaces rework.
-func Call(e Endpoint, p Procedure, d interface{}) ([]byte, error) {
+func Call(c Caller, p string, d interface{}) ([]byte, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(d)
 	if err != nil {
@@ -41,18 +41,5 @@ func Call(e Endpoint, p Procedure, d interface{}) ([]byte, error) {
 	}
 	// Make POST request
 	buf := bytes.NewReader(j)
-	r, err := e.Post(p, buf)
-	if err != nil {
-		err = fmt.Errorf("Error with POST request to %s : %v", e, err)
-		return nil, err
-	}
-	defer r.Body.Close()
-	// Read response
-	b, err := io.ReadAll(r.Body)
-	// Return if error or status code shows an unsuccessful request.
-	if err != nil || r.StatusCode > 299 {
-		return b, err
-	}
-
-	return b, nil
+	return c.Call(Procedure(p), buf)
 }

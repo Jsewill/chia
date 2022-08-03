@@ -5,8 +5,6 @@ import (
 	"fmt"
 )
 
-type Procedure string
-
 const (
 	WalletMintNFT    Procedure = "nft_mint_nft"
 	WalletSyncStatus Procedure = "get_sync_status"
