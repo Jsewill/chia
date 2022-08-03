@@ -1,4 +1,4 @@
-/* Package rpc provides types and methods for use in communicating with the chia RPC */
+/* Package rpc provides types and methods for use in communicating with the Chia RPC */
 package rpc
 
 import (
