@@ -1,4 +1,4 @@
-/* package nft implements basic types for working with NFT assets. */
+/* Package nft implements basic types and methods for working with NFT assets. */
 package nft
 
 import "fmt"

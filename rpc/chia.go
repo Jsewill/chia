@@ -1,4 +1,4 @@
-/* rpc is a library for use in communicating with the chia RPC */
+/* Package rpc provides types and methods for use in communicating with the chia RPC */
 package rpc
 
 import (
