@@ -43,6 +43,7 @@ func Call(c Caller, p string, d interface{}) ([]byte, error) {
 	return c.Call(Procedure(p), j)
 }
 
+// Errors is a slice of error, and itself implements the built-in error interface.
 type Errors []error
 
 func NewErrors(e ...error) Errors {
@@ -50,10 +51,17 @@ func NewErrors(e ...error) Errors {
 	return append(errs, e...)
 }
 
+// Error implements the built-in error interface.
 func (e Errors) Error() string {
 	s := make([]string, 0)
 	for _, err := range e {
 		s = append(s, err.Error())
 	}
 	return strings.Join(s, "\n")
+}
+
+// PercentageToRoyalty takes a percentage p%, and returns the royalty percentage uint as chia expects it.
+// (Ex: 5%; p=5, returns 500)
+func PercentageToRoyalty(p float64) uint {
+	return uint(p * 100.0)
 }

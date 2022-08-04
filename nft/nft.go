@@ -4,14 +4,16 @@ package nft
 import "fmt"
 
 // NFT represents an NFT.
-type NFT struct {
+type Nft struct {
 	*Asset
 	Metadata *Asset
 	License  *Asset
+	Fee      uint
+	Royalty  float64
 }
 
 // Retrieve and compare hashes for Asset, Metadata, and License files from their respective URLs.
-func (nft *NFT) Hash() error {
+func (nft *Nft) Hash() error {
 	// Try hashing Asset files from URLs.
 	err := nft.Hash()
 	if err != nil {

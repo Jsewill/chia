@@ -12,19 +12,19 @@ import (
 
 // Asset represents an NFT asset
 type Asset struct {
-	Urls []string
+	Uris []string
 	Hash string
 }
 
-// Retrieve and compare hashes for this Asset from its URL(s)
+// Retrieve and compare hashes for this Asset from its URI(s)
 func (a *Asset) Hash() error {
-	if len(a.Urls) == 0 {
+	if len(a.Uris) == 0 {
 		return fmt.Errorf("There are no URLs to hash on this Asset.")
 	}
 	hashMap := make(map[string]string)
 	var prevHash string
 	// Get hashes for all URLs and compare.
-	for i, u := range a.Urls {
+	for i, u := range a.Uris {
 		s := sha256.New()
 		// Do we have a legal URL, or is it possibly a file path?
 		url, err := url.Parse(u)
@@ -56,7 +56,7 @@ func (a *Asset) Hash() error {
 		prevHash = hashMap[u]
 	}
 	// Set hash, having successfully hashing each URL, and checking for duplicates.
-	a.Hash = hashMap[a.Urls[0]]
+	a.Hash = hashMap[a.Uris[0]]
 
 	return nil
 }
