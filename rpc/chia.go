@@ -2,11 +2,11 @@
 package rpc
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -40,6 +40,20 @@ func Call(c Caller, p string, d interface{}) ([]byte, error) {
 		return nil, err
 	}
 	// Make POST request
-	buf := bytes.NewReader(j)
-	return c.Call(Procedure(p), buf)
+	return c.Call(Procedure(p), j)
+}
+
+type Errors []error
+
+func NewErrors(e ...error) Errors {
+	errs := make(Errors, len(e))
+	return append(errs, e...)
+}
+
+func (e Errors) Error() string {
+	s := make([]string, 0)
+	for _, err := range e {
+		s = append(s, err.Error())
+	}
+	return strings.Join(s, "\n")
 }

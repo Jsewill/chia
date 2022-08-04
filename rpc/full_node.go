@@ -3,7 +3,6 @@ package rpc
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 )
 
 const (
@@ -174,25 +173,25 @@ func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 		return nil, fmt.Errorf("Failed to make CoinRecords request, please set Names, ParentIds, or Hints.")
 	}
 	// Handle can consolidate response(s)
-	errs := make([]error)
+	errs := NewErrors()
 	cr := new(CoinRecordsResponse)
 	for _, rout := range responses {
 		// Handle response
 		tempCr := new(CoinRecordsResponse)
 		err = json.Unmarshal(rout, tempCr)
 		if err != nil {
-			errs := append(errs, fmt.Errorf("CoinRecordsRequest failed to unmarshal response. Error:", err))
+			errs = append(errs, fmt.Errorf("CoinRecordsRequest failed to unmarshal response. Error: %s", err))
 			continue
 		}
 		if !tempCr.Success {
-			errs := append(errs, fmt.Errorf("CoinRecordsRequest was unsuccessful. Error:", tempCr.Error))
+			errs = append(errs, fmt.Errorf("CoinRecordsRequest was unsuccessful. Error: %s", tempCr.Error))
 			continue
 		}
 		cr.Success = true
-		cr.Coins = append(cr.Coins, tempCr...)
+		cr.CoinRecords = append(cr.CoinRecords, tempCr.CoinRecords...)
 	}
 	if len(errs) > 0 {
-		return cr, strings.Join(errs, "\n")
+		return cr, fmt.Errorf("%s \n", errs)
 	}
 
 	return cr, err

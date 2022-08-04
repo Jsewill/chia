@@ -135,7 +135,7 @@ func (s *SyncStatusRequest) String() string {
 }
 
 type WalletBalanceRequest struct {
-	Wallet_id uint `json:"wallet_id"`
+	WalletId uint `json:"wallet_id"`
 }
 
 func (w *WalletBalanceRequest) Procedure() Procedure {
