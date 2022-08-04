@@ -37,9 +37,6 @@ get_block_spends
 get_unfinished_block_headers
 get_network_space
 get_additions_and_removals
-get_coin_records_by_names
-get_coin_records_by_parent_ids
-get_coin_records_by_hint
 get_puzzle_and_solution
 get_recent_signage_point_or_eos
 get_coin_records_by_puzzle_hash
@@ -124,7 +121,7 @@ type CoinRecordsResponse struct {
 	Error       string        `json:"error"`
 }
 
-// CoinRecordsRequest is a type for making at least one request for a multiple CoinRecords by coin names, parent_ids, and/or hints.
+// CoinRecordsRequest is a type for making at least one request for a multiple CoinRecords by coin names, parent ids, and/or hints.
 type CoinRecordsRequest struct {
 	Names        []string `json:"names"`
 	ParentIds    []string `json:"parent_ids"`
@@ -139,7 +136,7 @@ func (c *CoinRecordsRequest) Procedure() Procedure {
 	return FullNodeCoinRecordByNames
 }
 
-// Sends at least one request, of at least one CoinRequest procedure, via an Endpoint, and returns the response, and any error. If successful, error returns nil.
+// Sends at least one request, of at least one CoinRecordsByN procedure, via an Endpoint, and returns the response, and any error. If successful, error returns nil.
 func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(c)
