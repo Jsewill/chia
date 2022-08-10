@@ -4,3 +4,11 @@
 ### Neither this project, nor its author are affiliated with Chia Network, or the Chia Blockchain, in any way. The name, "Chia" as used in this repository, is simply to keep things clear and Go-like; to indicate what it, and its sub-packages are for, and to make import paths clear.
 
 This module is a work in progress, and is, as such, subject to changes, even breaking ones. It currently houses chia/rpc and chia/nft. See each of these for their respective descriptions and usage (if applicable). Also, check out another work-in-progress of ours, called Artwork: https://github.com/Jsewill/artwork
+
+If you wish to donate toward the development of this project, please use any of the following addresses:
+
+	XCH (Chia): xch1d80tfje65xy97fpxg7kl89wugnd6svlv5uag2qays0um5ay5sn0qz8vph8
+	BTC (Bitcoin): 39AcR4aQtvBScT2DEgdqefiH3S8CQzMGfV
+	ETH (Ethereum): 0xeA01FC83cee4B89DbD1d27CA0A32bB7B4b1253d1
+	USDT (Tether): 0x6be549359f580BC1d8Db61C0CF13198eF14eD999
+	USDC (USD Coin): 0xfb9a45a7Fe781D4fc449e63532424bCfDfB086B4
