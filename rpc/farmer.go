@@ -7,6 +7,6 @@ var (
 func init() {
 	err := Farmer.Init()
 	if err != nil {
-		panic(err)
+		logErr.Panicln(err)
 	}
 }

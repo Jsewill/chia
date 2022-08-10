@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -43,13 +42,13 @@ func (e *Endpoint) Init() error {
 	// Load Certs.
 	c, err := tls.LoadX509KeyPair(cp, kp)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	// Get Chia CA.
 	ownCa, err := ioutil.ReadFile(rp)
 	if err != nil {
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 
 	// Make pool from Chia CA.
@@ -74,6 +73,7 @@ func (e *Endpoint) Init() error {
 func (e *Endpoint) Post(p Procedure, b io.Reader) (*http.Response, error) {
 	uri := strings.Join([]string{e.String(), string(p)}, "/")
 	r, err := e.Client.Post(uri, "application/json", b)
+	logErr.Println(err)
 	return r, err
 }
 
@@ -90,6 +90,7 @@ func (e *Endpoint) Call(p Procedure, j []byte) ([]byte, error) {
 	r, err := e.Post(p, buf)
 	if err != nil {
 		err = fmt.Errorf("Error with POST request to %s : %v", e, err)
+		logErr.Println(err)
 		return nil, err
 	}
 	defer r.Body.Close()

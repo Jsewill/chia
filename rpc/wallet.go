@@ -18,7 +18,7 @@ var (
 func init() {
 	err := Wallet.Init()
 	if err != nil {
-		panic(err)
+		logErr.Panicln(err)
 	}
 }
 
@@ -55,17 +55,20 @@ func (m MintRequest) Send(e *Endpoint) (*MintResponse, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(m)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request
 	out, err := e.Call(m.Procedure(), j)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Handle response
 	mr := new(MintResponse)
 	err = json.Unmarshal(out, mr)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	return mr, nil
@@ -74,8 +77,7 @@ func (m MintRequest) Send(e *Endpoint) (*MintResponse, error) {
 func (m *MintRequest) String() string {
 	j, err := json.Marshal(m)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, m.Procedure(), j)
 }
@@ -109,17 +111,20 @@ func (s *SyncStatusRequest) Send(e *Endpoint) (*SyncStatusResponse, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(s)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request
 	out, err := e.Call(s.Procedure(), j)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Handle response
 	sr := new(SyncStatusResponse)
 	err = json.Unmarshal(out, sr)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	return sr, nil
@@ -128,8 +133,7 @@ func (s *SyncStatusRequest) Send(e *Endpoint) (*SyncStatusResponse, error) {
 func (s *SyncStatusRequest) String() string {
 	j, err := json.Marshal(s)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, s.Procedure(), j)
 }
@@ -146,17 +150,20 @@ func (w *WalletBalanceRequest) Send(e *Endpoint) (*WalletBalanceResponse, error)
 	// Marshal request body as JSON
 	j, err := json.Marshal(w)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request
 	out, err := e.Call(w.Procedure(), j)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Handle response
 	wr := new(WalletBalanceResponse)
 	err = json.Unmarshal(out, wr)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	return wr, nil
@@ -165,8 +172,7 @@ func (w *WalletBalanceRequest) Send(e *Endpoint) (*WalletBalanceResponse, error)
 func (w *WalletBalanceRequest) String() string {
 	j, err := json.Marshal(w)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, w.Procedure(), j)
 }

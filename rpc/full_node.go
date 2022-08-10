@@ -19,7 +19,7 @@ var (
 func init() {
 	err := FullNode.Init()
 	if err != nil {
-		panic(err)
+		logErr.Panicln(err)
 	}
 }
 
@@ -87,17 +87,20 @@ func (c *CoinRecordRequest) Send(e *Endpoint) (*CoinRecordResponse, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(c)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request
 	out, err := e.Call(c.Procedure(), j)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Handle response
 	cr := new(CoinRecordResponse)
 	err = json.Unmarshal(out, cr)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	return cr, nil
@@ -107,8 +110,7 @@ func (c *CoinRecordRequest) Send(e *Endpoint) (*CoinRecordResponse, error) {
 func (c *CoinRecordRequest) String() string {
 	j, err := json.Marshal(c)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, c.Procedure(), j)
 }
@@ -140,6 +142,7 @@ func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(c)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request(s)
@@ -149,6 +152,7 @@ func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 		// Make request with Names
 		out, err := e.Call(c.Procedure(), j)
 		if err != nil {
+			logErr.Println(err)
 			return nil, err
 		}
 		responses = append(responses, out)
@@ -157,6 +161,7 @@ func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 		// Make request with ParentIds
 		out, err := e.Call(FullNodeCoinRecordByParentIds, j)
 		if err != nil {
+			logErr.Println(err)
 			return nil, err
 		}
 		responses = append(responses, out)
@@ -165,12 +170,16 @@ func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 		// Make request with Hints
 		out, err := e.Call(FullNodeCoinRecordByHints, j)
 		if err != nil {
+			logErr.Println(err)
 			return nil, err
 		}
 		responses = append(responses, out)
 	default:
 		// Nothing to request.
-		return nil, fmt.Errorf("Failed to make CoinRecords request, please set Names, ParentIds, or Hints.")
+		err = fmt.Errorf("Failed to make CoinRecords request, please set Names, ParentIds, or Hints.")
+		logErr.Println(err)
+
+		return nil, err
 	}
 	// Handle can consolidate response(s)
 	errs := NewErrors()
@@ -191,7 +200,9 @@ func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 		cr.CoinRecords = append(cr.CoinRecords, tempCr.CoinRecords...)
 	}
 	if len(errs) > 0 {
-		return cr, fmt.Errorf("%s \n", errs)
+		err = fmt.Errorf("%s \n", errs)
+		logErr.Println(err)
+		return cr, errs
 	}
 
 	return cr, err
@@ -201,8 +212,7 @@ func (c *CoinRecordsRequest) Send(e *Endpoint) (*CoinRecordsResponse, error) {
 func (c *CoinRecordsRequest) String() string {
 	j, err := json.Marshal(c)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, c.Procedure(), j)
 }
@@ -225,17 +235,20 @@ func (c *CoinRecordsByNameRequest) Send(e *Endpoint) (*CoinRecordsResponse, erro
 	// Marshal request body as JSON
 	j, err := json.Marshal(c)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request
 	out, err := e.Call(c.Procedure(), j)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Handle response
 	cr := new(CoinRecordsResponse)
 	err = json.Unmarshal(out, cr)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	return cr, nil
@@ -245,8 +258,7 @@ func (c *CoinRecordsByNameRequest) Send(e *Endpoint) (*CoinRecordsResponse, erro
 func (c *CoinRecordsByNameRequest) String() string {
 	j, err := json.Marshal(c)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, c.Procedure(), j)
 }
@@ -269,17 +281,20 @@ func (c *CoinRecordsByParentIdsRequest) Send(e *Endpoint) (*CoinRecordsResponse,
 	// Marshal request body as JSON
 	j, err := json.Marshal(c)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request
 	out, err := e.Call(c.Procedure(), j)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Handle response
 	cr := new(CoinRecordsResponse)
 	err = json.Unmarshal(out, cr)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	return cr, nil
@@ -289,8 +304,7 @@ func (c *CoinRecordsByParentIdsRequest) Send(e *Endpoint) (*CoinRecordsResponse,
 func (c *CoinRecordsByParentIdsRequest) String() string {
 	j, err := json.Marshal(c)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, c.Procedure(), j)
 }

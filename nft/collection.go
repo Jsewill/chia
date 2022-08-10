@@ -1,8 +1,9 @@
 package nft
 
+// Collection holds NFT collection data.
 type Collection struct {
-	ID
-	NFTs    []*NFT
+	Id
+	Nfts    []*NFT
 	Fee     uint
 	Royalty float64
 }

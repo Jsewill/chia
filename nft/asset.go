@@ -13,13 +13,19 @@ import (
 // Asset represents an NFT asset
 type Asset struct {
 	Uris []string
-	Hash string
+	hash string
 }
 
-// Retrieve and compare hashes for this Asset from its URI(s)
-func (a *Asset) Hash() error {
+// Hash retrieves, or computes and compares, the hash for this Asset from its URI(s), and return the hash if they agree, otherwise return an error.
+func (a *Asset) Hash() (string, error) {
+	// If hash is set, don't compute.
+	if a.hash != "" {
+		return a.hash, nil
+	}
 	if len(a.Uris) == 0 {
-		return fmt.Errorf("There are no URLs to hash on this Asset.")
+		err := fmt.Errorf("There are no URLs to hash on this Asset.")
+		logErr.Println(err)
+		return "", err
 	}
 	hashMap := make(map[string]string)
 	var prevHash string
@@ -33,7 +39,9 @@ func (a *Asset) Hash() error {
 			r, err := http.Get(url.String())
 			if err != nil {
 				// Couldn't get asset from URL
-				return fmt.Errorf("Unable to get asset at %s for hashing.", u)
+				err = fmt.Errorf("Unable to get asset at %s for hashing.", u)
+				logErr.Println(err)
+				return "", err
 			}
 			defer r.Body.Close()
 			// Attempt to get the hash of the asset.
@@ -46,17 +54,26 @@ func (a *Asset) Hash() error {
 		}
 		// Handle hashing error.
 		if err != nil {
-			return fmt.Errorf("Couldn't read from asset at %s, to get its hash.", u)
+			err = fmt.Errorf("Couldn't read from asset at %s, to get its hash.", u)
+			logErr.Println(err)
+			return "", err
 		}
 		// Hash and check against the previous hash.
 		hashMap[u] = hex.EncodeToString(s.Sum(nil))
 		if i > 0 && hashMap[u] != prevHash {
-			return fmt.Errorf("Hash of asset at %s, is not identical to one of the others: %s.", u, prevHash)
+			err = fmt.Errorf("Hash of asset at %s, is not identical to one of the others: %s.", u, prevHash)
+			logErr.Println(err)
+			return "", err
 		}
 		prevHash = hashMap[u]
 	}
 	// Set hash, having successfully hashing each URL, and checking for duplicates.
-	a.Hash = hashMap[a.Uris[0]]
+	a.hash = hashMap[a.Uris[0]]
 
-	return nil
+	return a.hash, nil
+}
+
+// SetHash sets the asset hash to the supplied string.
+func (a *Asset) SetHash(h string) {
+	a.hash = h
 }

@@ -53,17 +53,20 @@ func (u *UntypedRequest) Send(e *Endpoint) (UntypedResponse, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(u.Data)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make request
 	out, err := e.Call(u.Proc, j)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Handle response
 	ur := make(UntypedResponse)
 	err = json.Unmarshal(out, ur)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	return UntypedResponse(ur), nil
@@ -73,8 +76,7 @@ func (u *UntypedRequest) Send(e *Endpoint) (UntypedResponse, error) {
 func (u *UntypedRequest) String() string {
 	j, err := json.Marshal(u.Data)
 	if err != nil {
-		// Log error
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, u.Proc, j)
 }

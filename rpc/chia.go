@@ -3,7 +3,6 @@ package rpc
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,10 +21,10 @@ var (
 func init() {
 	HomeDir, err := os.UserHomeDir()
 	if err != nil {
-		panic("Couldn't get home directory path. Error: " + fmt.Sprint(err))
+		logErr.Panicf("Couldn't get home directory path. Error: %s", err)
 	}
 	if _, err := os.Stat(HomeDir); os.IsNotExist(err) {
-		panic("System specified home directory does not exist.")
+		logErr.Panicln("System specified home directory does not exist.")
 	}
 	DefaultPath = filepath.Join(HomeDir, DefaultPath)
 }
@@ -37,6 +36,7 @@ func Call(c Caller, p string, d interface{}) ([]byte, error) {
 	// Marshal request body as JSON
 	j, err := json.Marshal(d)
 	if err != nil {
+		logErr.Println(err)
 		return nil, err
 	}
 	// Make POST request
