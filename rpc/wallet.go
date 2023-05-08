@@ -42,7 +42,7 @@ type MintBulkResponse struct {
 
 type MintBulkRequest struct {
 	WalletId            int                    `json:"wallet_id"`
-	MetadataList        []MetadataListItem     `json:"metadata_list"`
+	MetadataList        []*MetadataListItem    `json:"metadata_list"`
 	RoyaltyPercentage   int                    `json:"royalty_percentage,omitempty"`
 	RoyaltyAddress      string                 `json:"royalty_address,omitempty"`
 	TargetAddressList   []string               `json:"target_address_list,omitempty"`
