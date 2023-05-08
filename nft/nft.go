@@ -6,6 +6,6 @@ type Nft struct {
 	*Asset
 	Metadata *Asset
 	License  *Asset
-	Fee      uint
-	Royalty  float64
+	Fee      uint    // Fee in mojos
+	Royalty  float64 // Royalty as a percentage; not a fraction or basis points.
 }

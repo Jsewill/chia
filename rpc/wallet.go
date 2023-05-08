@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	WalletNFTMint     Procedure = "nft_mint_nft"
-	WalletNFTMintBulk Procedure = "nft_mint_bulk"
-	WalletSyncStatus  Procedure = "get_sync_status"
-	WalletGetBalance  Procedure = `get_wallet_balance`
+	WalletNFTMint         Procedure = "nft_mint_nft"
+	WalletNFTMintBulk     Procedure = "nft_mint_bulk"
+	WalletNFTGetWalletDID Procedure = "nft_get_wallet_did"
+	WalletSyncStatus      Procedure = "get_sync_status"
+	WalletGetBalance      Procedure = `get_wallet_balance`
 )
 
 var (
@@ -35,9 +36,10 @@ type MetadataListItem struct {
 }
 
 type MintBulkResponse struct {
-	nft_id_list  []string
-	Spend_bundle *SpendBundle
-	Success      bool
+	NftIdList   []string     `json:"nft_id_list"`
+	SpendBundle *SpendBundle `json:"spend_bundle"`
+	Success     bool         `json:"success"`
+	Error       string       `json:"error"`
 }
 
 type MintBulkRequest struct {
@@ -96,8 +98,9 @@ func (m *MintBulkRequest) String() string {
 
 type MintResponse struct {
 	Spend_bundle *SpendBundle
-	Success      bool
-	Wallet_id    uint
+	Success      bool   `json:"success"`
+	WalletId     uint   `json:"wallet_id"`
+	Error        string `json:"error"`
 }
 
 type MintRequest struct {
@@ -265,4 +268,49 @@ type WalletBalanceResponse struct {
 	WalletBalance *WalletBalance `json:"wallet_balance"`
 	Success       bool           `json:"success"`
 	Error         string         `json:"error"`
+}
+
+type NftWalletGetDidRequest struct {
+	WalletId uint `json:"wallet_id"`
+}
+
+func (w *NftWalletGetDidRequest) Procedure() Procedure {
+	return WalletNFTGetWalletDID
+}
+
+func (n *NftWalletGetDidRequest) Send(e *Endpoint) (*NftWalletGetDidResponse, error) {
+	// Marshal request body as JSON
+	j, err := json.Marshal(n)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	// Make request
+	out, err := e.Call(w.Procedure(), j)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	// Handle response
+	nr := new(NftWalletGetDidResponse)
+	err = json.Unmarshal(out, nr)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	return nr, nil
+}
+
+func (n *NftWalletGetDidRequest) String() string {
+	j, err := json.Marshal(n)
+	if err != nil {
+		logErr.Println(err)
+	}
+	return fmt.Sprintf(`%s %q`, n.Procedure(), j)
+}
+
+type NftWalletGetDidResponse struct {
+	DidId   int    `json:"did_id"`
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
 }

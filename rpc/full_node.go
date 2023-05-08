@@ -308,3 +308,5 @@ func (c *CoinRecordsByParentIdsRequest) String() string {
 	}
 	return fmt.Sprintf(`%s %q`, c.Procedure(), j)
 }
+
+// @TODO: implement push_tx for bulk minting.
