@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	WalletMintNFT    Procedure = "nft_mint_nft"
-	WalletSyncStatus Procedure = "get_sync_status"
-	WalletGetBalance Procedure = `get_wallet_balance`
+	WalletNFTMint     Procedure = "nft_mint_nft"
+	WalletNFTMintBulk Procedure = "nft_mint_bulk"
+	WalletSyncStatus  Procedure = "get_sync_status"
+	WalletGetBalance  Procedure = `get_wallet_balance`
 )
 
 var (
@@ -20,6 +21,77 @@ func init() {
 	if err != nil {
 		logErr.Panicln(err)
 	}
+}
+
+type MetadataListItem struct {
+	Uris          []string `json:"uris"`
+	MetaUris      []string `json:"meta_uris,omitempty"`
+	LicenseUris   []string `json:"license_uris,omitempty"`
+	Hash          string   `json:"hash"`
+	MetaHash      string   `json:"meta_hash,omitempty"`
+	LicenseHash   string   `json:"license_hash,omitempty"`
+	EditionNumber int      `json:"edition_number,omitempty"` // Not in CHIP-0007, but in chia 1.4.0 as "series_total", rather than "edition_total", due to bug. This was fixed in chia 1.5.0.
+	EditionTotal  int      `json:"edition_total,omitempty"`  // Not in CHIP-0007, but in chia 1.4.0 as "series_number", rather than "edition_total", due to bug. This was fixed in chia 1.5.0.
+}
+
+type MintBulkResponse struct {
+	nft_id_list  []string
+	Spend_bundle *SpendBundle
+	Success      bool
+}
+
+type MintBulkRequest struct {
+	WalletId            int                    `json:"wallet_id"`
+	MetadataList        []MetadataListItem     `json:"metadata_list"`
+	RoyaltyPercentage   int                    `json:"royalty_percentage,omitempty"`
+	RoyaltyAddress      string                 `json:"royalty_address,omitempty"`
+	TargetAddressList   []string               `json:"target_address_list,omitempty"`
+	MintNumberStart     int                    `json:"mint_number_start,omitempty"`
+	MintTotal           int                    `json:"mint_total,omitempty"`
+	XchCoinList         []string               `json:"xch_coin_list,omitempty"`
+	XchChangeTarget     string                 `json:"xch_change_target,omitempty"`
+	NewInnerPuzHash     string                 `json:"new_innerpuzhash,omitempty"`
+	NewP2PuzHash        string                 `json:"new_p2_puzhash,omitempty"`
+	DidCoinDict         map[string]interface{} `json:"did_coin_dict,omitempty"`
+	DidLineageParentHex string                 `json:"did_lineage_parent_hex,omitempty"`
+	MintFromDid         bool                   `json:"mint_from_did,omitempty"`
+	Fee                 float64                `json:"fee,omitempty"`
+	ReusePuzHash        bool                   `json:"reuse_puzhash,omitempty"`
+}
+
+func (m *MintBulkRequest) Procedure() Procedure {
+	return WalletNFTMintBulk
+}
+
+func (m MintBulkRequest) Send(e *Endpoint) (*MintBulkResponse, error) {
+	// Marshal request body as JSON
+	j, err := json.Marshal(m)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	// Make request
+	out, err := e.Call(m.Procedure(), j)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	// Handle response
+	mbr := new(MintBulkResponse)
+	err = json.Unmarshal(out, mbr)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	return mbr, nil
+}
+
+func (m *MintBulkRequest) String() string {
+	j, err := json.Marshal(m)
+	if err != nil {
+		logErr.Println(err)
+	}
+	return fmt.Sprintf(`%s %q`, m.Procedure(), j)
 }
 
 type MintResponse struct {
@@ -48,7 +120,7 @@ type MintRequest struct {
 }
 
 func (m *MintRequest) Procedure() Procedure {
-	return WalletMintNFT
+	return WalletNFTMint
 }
 
 func (m MintRequest) Send(e *Endpoint) (*MintResponse, error) {
