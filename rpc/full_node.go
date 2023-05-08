@@ -10,6 +10,7 @@ const (
 	FullNodeCoinRecordByNames     Procedure = "get_coin_record_by_names"
 	FullNodeCoinRecordByParentIds Procedure = "get_coin_record_by_parent_ids"
 	FullNodeCoinRecordByHints     Procedure = "get_coin_record_by_hints"
+	FullNodePushTx                Procedure = "push_tx"
 )
 
 var (
@@ -263,7 +264,7 @@ func (c *CoinRecordsByNameRequest) String() string {
 	return fmt.Sprintf(`%s %q`, c.Procedure(), j)
 }
 
-// CoinRecordsRequest is a type for making a request for a multiple CoinRecords by parent ids.
+// CoinRecordsByParentIdsRequest is a type for making a request for a multiple CoinRecords by parent ids.
 type CoinRecordsByParentIdsRequest struct {
 	ParentIds    []string `json:"parent_ids"`
 	StartHeight  uint     `json:"start_height,omitempty"`
@@ -309,4 +310,52 @@ func (c *CoinRecordsByParentIdsRequest) String() string {
 	return fmt.Sprintf(`%s %q`, c.Procedure(), j)
 }
 
-// @TODO: implement push_tx for bulk minting.
+// PushTxResponse represents the Chia RPC API's response to a PushTxRequest.
+type PushTxResponse struct {
+	Status  string `json:"status"`
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
+
+// PushTxRequest is a type for making a request to submit a SpendBundle to the blockchain.
+type PushTxRequest struct {
+	SpendBundle *SpendBundle `json:"spend_bundle"`
+}
+
+// Procedure returns the Procedure which this request will use.
+func (c *PushTxRequest) Procedure() Procedure {
+	return FullNodePushTx
+}
+
+// Sends the request via an Endpoint, and returns the response, and an error. If successful, error returns nil.
+func (p *PushTxRequest) Send(e *Endpoint) (*PushTxResponse, error) {
+	// Marshal request body as JSON
+	j, err := json.Marshal(p)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	// Make request
+	out, err := e.Call(p.Procedure(), j)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	// Handle response
+	pr := new(PushTxResponse)
+	err = json.Unmarshal(out, pr)
+	if err != nil {
+		logErr.Println(err)
+		return nil, err
+	}
+	return pr, nil
+}
+
+// String implements the fmt.Stringer interface.
+func (p *PushTxRequest) String() string {
+	j, err := json.Marshal(p)
+	if err != nil {
+		logErr.Println(err)
+	}
+	return fmt.Sprintf(`%s %q`, p.Procedure(), j)
+}

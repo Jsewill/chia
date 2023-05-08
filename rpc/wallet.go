@@ -11,6 +11,7 @@ const (
 	WalletNFTGetWalletDID Procedure = "nft_get_wallet_did"
 	WalletSyncStatus      Procedure = "get_sync_status"
 	WalletGetBalance      Procedure = `get_wallet_balance`
+	WalletPushTx          Procedure = `push_tx`
 )
 
 var (
@@ -270,6 +271,12 @@ type WalletBalanceResponse struct {
 	Error         string         `json:"error"`
 }
 
+type NftWalletGetDidResponse struct {
+	DidId   int    `json:"did_id"`
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
+
 type NftWalletGetDidRequest struct {
 	WalletId uint `json:"wallet_id"`
 }
@@ -307,10 +314,4 @@ func (n *NftWalletGetDidRequest) String() string {
 		logErr.Println(err)
 	}
 	return fmt.Sprintf(`%s %q`, n.Procedure(), j)
-}
-
-type NftWalletGetDidResponse struct {
-	DidId   int    `json:"did_id"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
 }
