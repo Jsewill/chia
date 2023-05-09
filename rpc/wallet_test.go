@@ -21,7 +21,7 @@ func TestWalletBalance(t *testing.T) {
 		t.Errorf("Wallet Balance Request failed: %s", err)
 	}
 	if !balance.Success {
-		t.Errorf("Sync Status Request was unsuccessful: %s", balance.Error)
+		t.Errorf("Wallet Balance Request was unsuccessful: %s", balance.Error)
 	}
 	t.Log(balance, err)
 }

@@ -12,3 +12,39 @@ If you wish to donate toward the development of this project, please use any of 
 	ETH (Ethereum): 0xeA01FC83cee4B89DbD1d27CA0A32bB7B4b1253d1
 	USDT (Tether): 0x6be549359f580BC1d8Db61C0CF13198eF14eD999
 	USDC (USD Coin): 0xfb9a45a7Fe781D4fc449e63532424bCfDfB086B4
+
+## chia/rpc
+### Example Usage
+
+#### Sync Status
+```go
+r := &rpc.SyncStatusRequest{}
+status, err := r.Send(rpc.Wallet)
+if err != nil {
+    // Sync Status Request failed; handle error.
+}
+if !status.Success {
+    // Sync Status Request was unsuccessful; handle case.
+}
+if !status.Synced {
+    // Check to see if wallet is actively synchronizing.
+    if !status.Syncing {
+        // Wallet is not actively synchronizing.
+    }
+}
+```
+
+#### Wallet Balance
+```go
+r := &rpc.WalletBalanceRequest{WalletId: 1}
+balance, err := r.Send(rpc.Wallet)
+if err != nil {
+    // Wallet Balance Request failed; handle error
+}
+if !balance.Success {
+    // Sync Status Request was unsuccessful; handle error.
+}
+// Got wallet balance.
+fmt.Printf("Wallet Balance: %v", balance.WalletBalance)
+
+```
