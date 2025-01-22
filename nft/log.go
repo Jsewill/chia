@@ -11,8 +11,8 @@ const (
 
 func init() {
 	var (
-		logErr = log.Default
-		log    = log.New(os.StdOut, logPrefix, log.LstdFlags)
+		logErr = log.Default()
+		logger = log.New(os.Stdout, logPrefix, log.LstdFlags)
 	)
 	logErr.SetPrefix(logPrefix)
 }

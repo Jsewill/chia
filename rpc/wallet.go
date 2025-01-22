@@ -275,7 +275,7 @@ type NftWalletGetDidRequest struct {
 	WalletId uint `json:"wallet_id"`
 }
 
-func (w *NftWalletGetDidRequest) Procedure() Procedure {
+func (n *NftWalletGetDidRequest) Procedure() Procedure {
 	return WalletNFTGetWalletDID
 }
 
@@ -287,7 +287,7 @@ func (n *NftWalletGetDidRequest) Send(e *Endpoint) (*NftWalletGetDidResponse, er
 		return nil, err
 	}
 	// Make request
-	out, err := e.Call(w.Procedure(), j)
+	out, err := e.Call(n.Procedure(), j)
 	if err != nil {
 		logErr.Println(err)
 		return nil, err

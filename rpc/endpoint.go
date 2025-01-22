@@ -73,7 +73,9 @@ func (e *Endpoint) Init() error {
 func (e *Endpoint) Post(p Procedure, b io.Reader) (*http.Response, error) {
 	uri := strings.Join([]string{e.String(), string(p)}, "/")
 	r, err := e.Client.Post(uri, "application/json", b)
-	logErr.Println(err)
+	if err != nil {
+		logErr.Println(err)
+	}
 	return r, err
 }
 
