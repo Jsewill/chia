@@ -22,7 +22,7 @@ func (a *Attribute) UnmarshalJSON(d []byte) error {
 	}
 
 	// What did we get for the type and value?
-	t := []string{
+	t := [2]string{
 		"trait_type",
 		"value",
 	}
@@ -30,9 +30,17 @@ func (a *Attribute) UnmarshalJSON(d []byte) error {
 		switch v := m[n].(type) {
 		case float64:
 			// If a number, assume an int, as per the specification.
-			a.Type = strconv.Itoa(int(v))
+			if n == "trait_type" {
+				a.Type = strconv.Itoa(int(v))
+			} else {
+				a.Value = strconv.Itoa(int(v))
+			}
 		case string:
-			a.Type = v
+			if n == "trait_type" {
+				a.Type = v
+			} else {
+				a.Value = v
+			}
 		default:
 			// Anything else is outside of the specification.
 			return fmt.Errorf("Could not unmarshal %v, %T", v, v)
