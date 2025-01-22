@@ -21,28 +21,22 @@ func (a *Attribute) UnmarshalJSON(d []byte) error {
 		return err
 	}
 
-	// What did we get for the type? But for clarity's sake, this could be consolidated into a loop, since both Type and Value require the same treatment.
-	switch v := m["trait_type"].(type) {
-	case float64:
-		// If a number, assume an int, as per the specification.
-		a.Type = strconv.Itoa(int(v))
-	case string:
-		a.Type = v
-	default:
-		// Anything else is outside of the specification.
-		return fmt.Errorf("Could not unmarshal %v, %T", v, v)
+	// What did we get for the type and value?
+	t := []string{
+		"trait_type",
+		"value",
 	}
-
-	// What did we get for the value?
-	switch v := m["value"].(type) {
-	case float64:
-		// If a number, assume an int, as per the specification.
-		a.Value = strconv.Itoa(int(v))
-	case string:
-		a.Value = v
-	default:
-		// Anything else is outside of the specification.
-		return fmt.Errorf("Could not unmarshal %v, %T", v, v)
+	for _, n := range t {
+		switch v := m[n].(type) {
+		case float64:
+			// If a number, assume an int, as per the specification.
+			a.Type = strconv.Itoa(int(v))
+		case string:
+			a.Type = v
+		default:
+			// Anything else is outside of the specification.
+			return fmt.Errorf("Could not unmarshal %v, %T", v, v)
+		}
 	}
 
 	// Since min and max value are both optional, we should process them as such.
@@ -63,7 +57,7 @@ func (a *Attribute) UnmarshalJSON(d []byte) error {
 			a.Max = int(maxf)
 		} else {
 			// Supplied JSON was not a number.
-			return fmt.Errorf(`Invalid type assertion: supplied "max_value" (of type %T) for "trait_type", %s, was outside the specification.`, max, a.Type)
+			return fmt.Errorf(`Invalid type assertion while unmarshaling JSON to an %T: supplied "max_value" (of type %T) for "trait_type", %s, was outside the specification.`, a, max, a.Type)
 		}
 	}
 
